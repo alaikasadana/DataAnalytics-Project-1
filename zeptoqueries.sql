@@ -1,79 +1,108 @@
-create database zepto_sql_project;
-use zepto_sql_project;
+-- Create Database
+CREATE DATABASE zepto_sql_project;
 
+-- Select Database
+USE zepto_sql_project;
+
+
+-- Create Table
 CREATE TABLE zepto (
     sku_id INT AUTO_INCREMENT PRIMARY KEY,
     category VARCHAR(120),
     name VARCHAR(150) NOT NULL,
-    mrp DECIMAL(8,2),
-    discountPercent DECIMAL(5,2),
+    mrp DECIMAL(8, 2),
+    discountPercent DECIMAL(5, 2),
     availableQuantity INT,
-    discountedSellingPrice DECIMAL(8,2),
+    discountedSellingPrice DECIMAL(8, 2),
     weightInGms INT,
     outOfStock BOOLEAN,
     quantity INT
 );
 
+
+-- Rename Column If Required
 ALTER TABLE zepto
 CHANGE COLUMN `ï»¿sku_id` `sku_id` INT;
 
-desc zepto;
+
+-- Describe Table Structure
+DESC zepto;
 
 
--- count of rows 
-select count(*) from zepto;
-
--- sample data
-select * from zepto;
-
-select * from zepto
-limit 10;
-
--- null values
-select * from zepto
-where name is NULL
-or 
-category is NULL
-or 
-mrp is NULL
-or 
-discountPercent is NULL
-or 
-
-weightInGms is NULL
-or 
-availableQuantity is NULL
-or 
-outOfStock is NULL
-or 
-quantity is NULL;
+-- Count Number of Rows
+SELECT COUNT(*)
+FROM zepto;
 
 
--- diffrent product categroies
-select distinct category 
-from zepto
-order by category;
-
--- products in stock vs outofstock
-select outofstock , count(sku_id)
-from zepto 
-group by outofstock;
+-- Display All Data
+SELECT *
+FROM zepto;
 
 
--- product names present multiple times
-select name , count(sku_id) as " Number of SKUs"
-from zepto 
-group by name 
-having count(sku_id) >1
-order by count(sku_id) desc;
+-- Display First 10 Records
+SELECT *
+FROM zepto
+LIMIT 10;
 
--- data cleaning 
 
--- products with price = 0
-select * from zepto where mrp = 0 ;
+-- Check for NULL Values
+SELECT *
+FROM zepto
+WHERE name IS NULL
+   OR category IS NULL
+   OR mrp IS NULL
+   OR discountPercent IS NULL
+   OR weightInGms IS NULL
+   OR availableQuantity IS NULL
+   OR outOfStock IS NULL
+   OR quantity IS NULL;
 
+
+-- Find Different Product Categories
+SELECT DISTINCT category
+FROM zepto
+ORDER BY category;
+
+
+-- Count Products In Stock vs Out of Stock
+SELECT
+    outOfStock,
+    COUNT(sku_id) AS product_count
+FROM zepto
+GROUP BY outOfStock;
+
+
+-- Find Product Names Present Multiple Times
+SELECT
+    name,
+    COUNT(sku_id) AS number_of_skus
+FROM zepto
+GROUP BY name
+HAVING COUNT(sku_id) > 1
+ORDER BY number_of_skus DESC;
+
+
+-- Data Cleaning
+-- Find Products with MRP Equal to 0
+SELECT *
+FROM zepto
+WHERE mrp = 0;
+
+
+-- Disable Safe Update Mode
 SET SQL_SAFE_UPDATES = 0;
 
-delete from zepto where mrp = 0 ;
+
+-- Delete Products with MRP Equal to 0
+DELETE FROM zepto
+WHERE mrp = 0;
 
 
+-- Convert MRP from Paise to Rupees
+UPDATE zepto
+SET mrp = mrp / 100.0;
+
+
+-- Verify Updated MRP Values
+SELECT mrp
+FROM zepto;
